@@ -1,36 +1,54 @@
 // this component works with the Mapbox API to render a map, and combines logic from MapUtils and MapEvents to make the map functional
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { initializeMap, handleMapClick, handleMapMouseMove } from './MapUtils';
-import { MapEvents } from './MapEvents';
 import './map.css';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZmxhbWJvIiwiYSI6ImNseWhkbHdtdTAzZ2wya29tOHppb253dHUifQ.uFJZkQdteBAxPRBIs8Uzbw';
 
-export function Map() {
-  // mapRef refrences the div that Map will be held in
-  const mapRef = useRef(null);
-  // map stores the map instance
+export function Map({onMapClick, geoFeatures}) {
   const [map, setMap] = useState(null);
+  const mapRef = useRef(null);
 
-  //Effect Hook initalizes the map instance and sets up the map once it mounts
+  const handleMapMouseMove = useCallback((e, map) => {
+    // features again checks for previously saved points and temporarily stores them for later access
+    const features = map.queryRenderedFeatures(e.point, {
+      layers: ['points']
+    });
+    // styling logic is placed on the cursor to indicate to the user the two different functionalities (adding and removing points)
+    map.getCanvas().style.cursor = features.length ? 'pointer' : 'crosshair';
+  }, [] );
+  
+  //Initalize the map instance and sets up the map once it mounts
   useEffect(() => {
+    console.log(`init render`)
+    // Map initialization parameters.
+    // current: colored grey, centered slightly north, zoomed out, flat view
+    const mapInitParams = {
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [0, 15],
+      zoom: 1,
+      projection: 'equirectangular'
+    };
+
     // mapInstance initalizes the map and stores it
-    const mapInstance = initializeMap(mapRef.current);
-    // set projection styles our map flat
-    mapInstance.setProjection('equalEarth');
+    const mapInst = new mapboxgl.Map({
+      container: mapRef.current,
+      ...mapInitParams
+    });
+
     // on load directs map set up
-    mapInstance.on('load', () => {
+    mapInst.on('load', () => {
       // add source connects the map to a dataset where we can store geo points for our user
-      mapInstance.addSource('geojson', {
+      mapInst.addSource('geojson', {
         type: 'geojson',
         data: {
           type: 'FeatureCollection',
-          features: []
+          features: geoFeatures
         }
       });
+
       // add layer visualizes our dataset(points)
-      mapInstance.addLayer({
+      mapInst.addLayer({
         id: 'points',
         type: 'circle',
         source: 'geojson',
@@ -40,19 +58,47 @@ export function Map() {
         },
         filter: ['in', '$type', 'Point']
       });
+
       // set map moves our map instance to a permanent location now that set up is complete
-      setMap(mapInstance);
+      setMap(mapInst);
     });
-    // map instance removes the initalization logic after it is no longer needed
-    return () => mapInstance.remove();
-  }, []);
 
-  // map events imports a second effect hook which is responsible for user interaction
-  MapEvents(map, [
-    { event: 'click', handler: (e) => handleMapClick(e, map) },
-    { event: 'mousemove', handler: (e) => handleMapMouseMove(e, map) }
-  ]);
+    // map inst is removed after it is no longer needed
+    return () => mapInst.remove();
+  }, [] );
 
-  // return statement displays our map component, refrencing it through mapRef
-  return <div className="map-container" ref={mapRef} />;
+  //second effect hook is responsible for user interaction with map
+  useEffect(() => {
+    console.log(`event render`)
+    if (map) {
+      const clickHandler = (e) => onMapClick(e, map)
+      const mouseMoveHandler = (e) => handleMapMouseMove(e, map) 
+
+      map.on('click', clickHandler)
+      map.on('mousemove', mouseMoveHandler)
+
+      return () => {
+      
+        map.off('click', clickHandler)
+        map.off('mousemove', mouseMoveHandler)
+
+      };
+    }}, [onMapClick, handleMapMouseMove, map]);
+
+  // update map when geoFeatures changes
+  useEffect(() => {
+    console.log(`source render`)
+    if (map) {
+      map.getSource('geojson').setData({
+        type: 'FeatureCollection',
+        features: geoFeatures
+      });
+    }
+  }, [geoFeatures, map]);
+// return statement displays our map component, refrencing it through mapRef
+return (
+
+  <div className="map-container" ref={mapRef}>
+  </div>
+);
 }

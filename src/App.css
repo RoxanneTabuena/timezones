@@ -36,3 +36,31 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: 'title';
+  src: url('./fonts/Tiny5-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'text';
+  src: url('./fonts/Sarpanch-Medium.ttf');
+}
+
+body{cursor: crosshair;}
+
+.interface{
+  margin: 5%;
+  max-width: 700px;
+  text-align: center;
+}
+
+h1{
+  font-family: 'title';
+  font-size: x-large;
+}
+
+p{
+  font-family: 'title';
+  font-size: larger;
+}
