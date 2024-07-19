@@ -4,7 +4,6 @@ import { Map } from './Map';
 import { getTimezone, getRegion } from './GeoUtils';
 import { getLocalTime, getTimeDiff, getMatchingWeekdays } from './TimeUtils';
 import { getRegionDiff, getShortRegion } from './RegionUtils';
-import { type } from '@testing-library/user-event/dist/type';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -20,14 +19,15 @@ function App() {
       region: await getRegion(newPoint)
     }
   }
-  const setPerson = async (newPoint) =>{
+  const setPerson = useCallback(async (newPoint) => {
     const newPerson = await populatePerson(newPoint);
-    if (!user){
-      setUser(newPerson)
-    } else if (!homie){
-      setHomie(newPerson)
+    if (!user) {
+      setUser(newPerson);
+    } else if (!homie) {
+      setHomie(newPerson);
     }
-  }
+  }, [user, homie]);
+
   // Handle map click events
   const handleMapClick =  useCallback(async (e, map) => {
     // features checks for previously saved points and temporarily stores them for later access
@@ -64,7 +64,7 @@ function App() {
       // populate user and homie objects with geo info based on selected points
       await setPerson(newPoint);
     }
-  }, [setPerson]);
+  }, [user, homie, setPerson]);
 
   const getTextDisplay = (user, homie) => {
     if (!user) {
