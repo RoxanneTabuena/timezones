@@ -3,7 +3,7 @@ import './App.css';
 import { Map } from './Map';
 import { getTimezone, getRegion } from './GeoUtils';
 import { getLocalTime, getTimeDiff, getMatchingWeekdays } from './TimeUtils';
-import { getRegionDiff } from './RegionUtils';
+import { getRegionDiff, getShortRegion } from './RegionUtils';
 import { type } from '@testing-library/user-event/dist/type';
 
 function App() {
@@ -84,7 +84,7 @@ function App() {
     const timeDiff = getTimeDiff(user.timezone, homie.timezone);
     const matchingWeekdays = getMatchingWeekdays(user.localtime, homie.localtime)
     const regionDiff = getRegionDiff(user.region, homie.region);
-    
+
     if (typeof regionDiff === 'object') {
       [user.region, homie.region] = regionDiff;
     }
@@ -93,7 +93,7 @@ function App() {
     }
     
     let text = [
-      `It is ${homie.localtime} in ${homie.region}, their clocks run ${timeDiff} ${user.region}.`,
+      `It is ${homie.localtime} in ${homie.region}. Their clocks run ${timeDiff} ${getShortRegion(user.region)}.`,
       `You are located in ${user.region}, right now it is ${user.localtime}.`
     ];
     

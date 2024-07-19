@@ -2,6 +2,8 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import './map.css';
+import ReactDOM from 'react-dom/client';
+import { Marker } from './Marker'
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZmxhbWJvIiwiYSI6ImNseWhkbHdtdTAzZ2wya29tOHppb253dHUifQ.uFJZkQdteBAxPRBIs8Uzbw';
 
@@ -26,7 +28,7 @@ export function Map({onMapClick, geoFeatures}) {
     const mapInitParams = {
       style: 'mapbox://styles/mapbox/light-v11',
       center: [0, 15],
-      zoom: 1,
+      zoom: .5,
       projection: 'equirectangular'
     };
 
@@ -38,31 +40,32 @@ export function Map({onMapClick, geoFeatures}) {
 
     // on load directs map set up
     mapInst.on('load', () => {
-      // add source connects the map to a dataset where we can store geo points for our user
-      mapInst.addSource('geojson', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: geoFeatures
-        }
-      });
+      
+        // add source connects the map to a dataset where we can store geo points for our user
+        mapInst.addSource('geojson', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: geoFeatures
+          }
+        });
 
-      // add layer visualizes our dataset(points)
-      mapInst.addLayer({
-        id: 'points',
-        type: 'circle',
-        source: 'geojson',
-        paint: {
-          'circle-radius': 5,
-          'circle-color': '#000'
-        },
-        filter: ['in', '$type', 'Point']
-      });
+        // add layer visualizes our dataset(points)
+        mapInst.addLayer({
+          id: 'points',
+          type: 'circle',
+          source: 'geojson',
+          paint: {
+            'circle-radius': 5,
+            'circle-color': '#000'
+          },
+          filter: ['in', '$type', 'Point']
+        });
 
       // set map moves our map instance to a permanent location now that set up is complete
       setMap(mapInst);
     });
-
+    
     // map inst is removed after it is no longer needed
     return () => mapInst.remove();
   }, [] );

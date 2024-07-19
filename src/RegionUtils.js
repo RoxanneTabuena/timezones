@@ -6,3 +6,7 @@ export const getRegionDiff = (userRegion, homieRegion) => {
   area(userRegion) === area(homieRegion) ? [region(userRegion), region(homieRegion)]:
   true
 }
+
+export const getShortRegion = (region) => {
+  return region.split(', ')[0]
+}

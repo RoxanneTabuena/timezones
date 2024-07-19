@@ -6,3 +6,11 @@
 .mapboxgl-control-container {
     display: none;
 }
+
+.icon {
+    background-image: url('./icon.png');
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
