@@ -94,7 +94,7 @@ function App() {
     
     let text = [
       `It is ${homie.localtime} in ${homie.region}. Their clocks run ${timeDiff} ${getShortRegion(user.region)}.`,
-      `You are located in ${user.region}, right now it is ${user.localtime}.`
+      `You are located in ${user.region}. Right now it is ${user.localtime}.`
     ];
     
     if (timeDiff === 0) {
