@@ -7,8 +7,6 @@ export const getLocalTime = (zone) => {
   minute: 'numeric',
   weekday: 'long'
   };
-  /* Could not figure out why js displays times three hours ahead. After much reformatting and troubleshooting,
-  I decided on manually subtracting three hours from the time for a temporary fix*/
   return Intl.DateTimeFormat('en-US', options).format();
 };
 
