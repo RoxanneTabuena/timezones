@@ -77,7 +77,7 @@ function App() {
     if (user && !homie) {
       return [
         `Select the location of your loved one on the map to see their local time...`,
-        `You are located in ${user.region}, right now it is ${user.localtime}.`
+        `You are located in ${user.region}. Right now it is ${user.localtime}.`
       ];
     }
     
