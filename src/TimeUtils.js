@@ -9,9 +9,7 @@ export const getLocalTime = (zone) => {
   };
   /* Could not figure out why js displays times three hours ahead. After much reformatting and troubleshooting,
   I decided on manually subtracting three hours from the time for a temporary fix*/
-  const jsTime = new Date()
-  const trueTime = jsTime.setHours(jsTime.getHours() - 3)
-  return Intl.DateTimeFormat('en-US', options).format(trueTime);
+  return Intl.DateTimeFormat('en-US', options).format();
 };
 
 export const getTimeDiff = (userZone, homieZone) => {
