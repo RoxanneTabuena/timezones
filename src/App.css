@@ -36,14 +36,14 @@
     transform: rotate(360deg);
   }
 }
-
+/* 
 @font-face {
   font-family: 'title';
   src: url('./fonts/Tiny5-Regular.ttf');
-}
+} */
 
 @font-face {
-  font-family: 'text';
+  font-family: 'title';
   src: url('./fonts/Sarpanch-Medium.ttf');
 }
 
